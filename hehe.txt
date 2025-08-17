@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bottle Overlay Website</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .phone-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: url('https://i.imgur.com/IRpb5qv.png') no-repeat center center;
+    background-size: cover;
+  }
+
+  .overlay-img {
+    position: absolute;
+    height: auto;
+    cursor: pointer;
+  }
+
+  /* Percent-based so it scales on all devices */
+  #img1 { top: 77.5%; left: 53%; width: 18%; }
+  #img2 { top: 53.4%; left: 65.5%; width: 18%; }
+  #img3 { top: 65.9%; left: 63%; width: 18%; }
+  #img4 { top: 77%; left: 28%; width: 18%; }
+  #img5 { top: 63.9%; left: 20%; width: 18%; }
+  #img6 { top: 48.1%; left: 44.5%; width: 18%; }
+  #img7 { top: 49.5%; left: 20%; width: 18%; }
+  #img8 { top: 62%; left: 43%; width: 18%; }
+
+  /* Pink button */
+  #feelBtn {
+    position: absolute;
+    top: 15.8%;
+    left: 32%;
+    width: 32.8%;
+    height: 5%;
+    border-radius: 25px;
+    background-color: darkblue;
+    color: pink;
+    font-size: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+
+  /* Popup overlay */
+  .popup {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    flex-direction: column;
+  }
+
+  .popup img {
+    object-fit: contain;
+    max-width: 90%;
+    max-height: 80%;
+  }
+
+  /* Love text overlay */
+  .love-text-overlay {
+    position: absolute;
+    top: 30%;
+    left: 15%;
+    width: 70%;
+    height: 40%;
+    color: black;
+    font-size: 16px;
+    padding: 15px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0);
+    line-height: 1.5;
+    scrollbar-width: thin;
+  }
+
+  /* Pink scrollbar for love-text-overlay */
+  .love-text-overlay::-webkit-scrollbar-thumb {
+      background-color: #FFC0CB; /* baby pink */
+      border-radius: 4px;
+  }
+  .love-text-overlay::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+      border-radius: 4px;
+  }
+
+  /* Firefox scrollbar */
+  .love-text-overlay {
+      scrollbar-color: #FFC0CB rgba(0,0,0,0.1); /* thumb color, track color */
+  }
+
+
+  /* Back button */
+  #backBtn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 25px;
+    border-radius: 20px;
+    background-color: darkblue;
+    color: pink;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+    z-index: 15;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-container" id="phoneContainer">
+  <img id="img1" class="overlay-img" src="https://i.imgur.com/w917b9x.png" data-popup="https://i.imgur.com/ivIehPS.png">
+  <img id="img2" class="overlay-img" src="https://i.imgur.com/deezKVz.png" data-popup="https://i.imgur.com/61FaOKm.png">
+  <img id="img3" class="overlay-img" src="https://i.imgur.com/C0WXF2V.png" data-popup="https://i.imgur.com/5hI5sah.png">
+  <!-- swapped: mldUdsn now opens al7LQtq -->
+  <img id="img4" class="overlay-img" src="https://i.imgur.com/mldUdsn.png" data-popup="https://i.imgur.com/al7LQtq.png">
+  <img id="img5" class="overlay-img" src="https://i.imgur.com/XPfCSUk.png" data-popup="https://i.imgur.com/UPOa4Oy.png">
+  <img id="img6" class="overlay-img" src="https://i.imgur.com/AZoH3nc.png" data-popup="https://i.imgur.com/0goLwSM.png">
+  <!-- swapped: zB1Fi3i now opens 03ngIVJ -->
+  <img id="img7" class="overlay-img" src="https://i.imgur.com/zB1Fi3i.png" data-popup="https://i.imgur.com/03ngIVJ.png">
+  <img id="img8" class="overlay-img" src="https://i.imgur.com/JTZZHA2.png" data-popup="https://i.imgur.com/cdKw1GP.png">
+
+  <button id="feelBtn">click here first</button>
+</div>
+
+<div class="popup" id="popup">
+  <img id="popupImg" src="">
+  <div class="love-text-overlay" id="loveText"></div>
+  <button id="backBtn">back</button>
+</div>
+
+<script>
+  const images = document.querySelectorAll('.overlay-img');
+  const popup = document.getElementById('popup');
+  const popupImg = document.getElementById('popupImg');
+  const loveText = document.getElementById('loveText');
+  const feelBtn = document.getElementById('feelBtn');
+  const phoneContainer = document.getElementById('phoneContainer');
+  const backBtn = document.getElementById('backBtn');
+
+  const originalHTML = phoneContainer.innerHTML;
+
+  // Each popup image can have custom text
+  const loveMessages = {
+    "https://i.imgur.com/0goLwSM.png": `Hiii my baby,
+
+If you’re opening this right now, it means something amazing happened to you, and just the thought of that makes my heart so full. I can already picture you with that smile on your face the one I love so much, the one that makes me want to hold you forever. I’m so so proud of you my love, more than words can ever explain. I always knew you were capable of this, but still, every time you do something incredible, it feels brand new and makes me fall in love with you even more.
+
+You deserve this happiness baby. You deserve every single good thing coming your way because you’ve worked for it, you’ve been patient, you’ve been strong, and you’ve stayed true to yourself. You inspire me so much. The way you put your heart into things, the way you never give up it makes me admire you endlessly. I hope right now, you let yourself fully feel this moment, because it’s yours. You earned it. And I love that I get to stand by your side and witness it all.
+
+I wish I could be right next to you right now, hugging you so tightly, kissing your cheeks, and celebrating this with you. I’d probably be jumping around with excitement, maybe even crying happy tears, because seeing you proud of yourself makes me the happiest person in the world. Your happiness is mine, always.
+
+So my love, keep smiling, keep shining, because this is only the beginning. There are so many more moments like this ahead for you, and I’ll be right here, always cheering for you, always believing in you, always loving you with my whole heart. No matter how big or small your win is, to me, it’s everything because it’s you. And I’ll never stop being proud of you.
+
+I love you endlessly babyy. Congratulationss you deserve the world.`,
+    "https://i.imgur.com/UPOa4Oy.png": `Hey love, If you’re reading this, it means I did something that hurt you or upset you, and I need to say I’m sorry with my whole heart. I’m sorry, baby. I’m sorry if I said something the wrong way. I’m sorry if I didn’t listen the way you needed me to. I’m sorry if my actions made you feel unloved, unappreciated, or distant from me. I never want to be the reason you feel that way.
+
+I’m sorry for every time I don’t explain myself well. I’m sorry for the moments when I let my emotions get in the way of being gentle with you. I’m sorry if I ever made you feel like you weren’t the most important person in my world because you are, and you always will be.
+
+I know I can’t take back what’s already happened, but I need you to know I’m sorry, again and again. I’m sorry, my love. You mean too much to me, and it breaks my heart to know I caused you pain.
+
+Please know that even when I mess up, my love for you doesn’t falter. Every “I’m sorry” comes from a place of love, from the part of me that never wants to lose you, never wants you to doubt how much I care.
+
+I’m sorry for the hurt, I’m sorry for the misunderstanding, I’m sorry for not being better in that moment. And I’m sorry if you’ve ever felt like you had to face your anger alone because I’m here, even in the middle of it, holding on to us.
+
+I’ll keep saying it as much as it takes: I’m sorry, I’m sorry, I’m sorry. But more than that, I promise I’ll keep trying, I’ll keep learning, and I’ll keep showing you just how much I love you. Because no matter what, you are my everything, and I never want you to forget that.`,
+    "https://i.imgur.com/61FaOKm.png": `Heyy baby!! If you’re opening this right now, it means you’re missing me or just wanting to feel close, and my heart is already running to you. I want you to imagine me right beside you because even if I’m not physically there, in my heart I always am. You’re never alone, my love. Not for a single second.
+
+Close your eyes for a moment and picture me holding your hand. Imagine my head resting on your shoulder, my voice whispering that I love you, over and over, until you can’t help but smile. That’s where I am whenever you miss me in all the small, invisible ways, right there with you.
+
+I know missing each other can feel hard sometimes, but baby, I see it as proof of how much we love. We miss because we care, because what we have is so beautiful and precious that being apart feels strange. And that’s something so special nw.
+
+So whenever you feel that ache in your chest, whenever you wish I was there, I want you to hold onto this truth: I’m thinking of you too. I’m missing you too. And even across any distance, my heart is wrapped around yours.
+
+You can hug this letter like it’s me, you can talk to me in your head, you can even look at the sky and know I’m under the same one thinking of you. There are a thousand ways to feel close, baby, and I hope every single one reminds you of how loved you are.
+
+I love you endlessly, my baby. I love you in every moment when we’re together, when we’re apart, and every second in between. So until the next time I get to hold you for real, keep me close in your heart the way I keep you in mine. You’ll always be with me. Always.`,
+    "https://i.imgur.com/ivIehPS.png": `Hey baby
+
+I know right now things feel heavy and your heart might be racing. Baby, it’s okay to feel scared or anxious. You don’t have to push it down or hide it from me. Everything will be okay, I promise.
+
+First, let’s slow down your breathing together. Breathe in for four counts, hold for two, breathe out for six. Do it a few times. Baby, it helps your body calm down and reminds your mind that you’re safe.
+
+Next, check in with your body. Are your shoulders tense? Your hands tight? Let them loosen. Shake your arms out, roll your shoulders, unclench your jaw. You’re allowed to release the tension, baby. You don’t have to carry it all alone.
+
+Say out loud what’s worrying you, even if it’s just a few words. Naming it makes it smaller. Say it like this: “I’m scared, but everything will be okay.” Repeat it if you need to. Baby, it’s okay to feel fear. Feeling scared doesn’t make you weak. You’re still my strong, amazing baby, and I’m right here with you.
+
+If your thoughts are racing, try grounding yourself. Look around and name five things you can see, four things you can touch, three things you can hear, two things you can smell, one thing you can taste. Baby, this pulls your mind back to the present, to safety, to right now. Everything will be okay, I promise.
+
+Remember, baby, you are loved so deeply. You are never alone in this. You are allowed to breathe, allowed to feel, allowed to take it one tiny step at a time. Everything will be okay. I’m here, holding you in my heart, loving you endlessly, and believing in you with all of me.
+
+You’ve got this, baby, and I’ve got you. Everything will be okay, always. And I'm proud of you no matter what. I mean it<3`,
+    "https://i.imgur.com/cdKw1GP.png": `Hi my baby,
+
+If you’re opening this right now, it means you’re feeling lost, maybe unsure of yourself, maybe like the world is too heavy. And I need you to know something first. You are never alone. Not now, not ever. Even when it feels confusing, even when nothing makes sense, I’m right here beside you, loving you, believing in you, and holding you in my heart.
+
+You are so much stronger than you realize. You are kind, determined, thoughtful, and capable of more than you give yourself credit for. I know it’s easy in moments like this to forget who you are, but I see it every single day. I see the way you try, I see the way you care, I see the way you keep going even when it’s hard. That’s what makes you so incredible.
+
+It’s okay to feel lost sometimes. It doesn’t mean you’ve failed. It just means you’re in a season where growth is happening, even if you can’t see it yet. Every person who has ever done something meaningful has gone through moments of confusion, and I promise this one won’t last forever.
+
+Think about all the times you thought you couldn’t handle something, and then you did. Think about every time you surprised yourself with your own strength. This moment will be another one of those. You will get through it, because that’s who you are. You are not someone who stays down. You always rise.
+
+Take it one step at a time, baby. You don’t need all the answers right now. You just need to keep moving forward, slowly, gently, giving yourself grace. And while you’re figuring it out, lean on me. Let me remind you of how loved you are, how capable you are, how much light you carry inside you.
+
+Whenever you feel lost, remember this. You are my whole world. You are loved endlessly. You are more capable than you’ll ever know. And no matter where life takes you, I’ll be right here, cheering for you, supporting you, and walking beside you.
+
+I love you forever, my baby. Keep going. You’ve got this, and I’ll never stop believing in you.`,
+    "https://i.imgur.com/5hI5sah.png": `Hi my baby,
+
+If you’re reading this right now, it means you just want something to make you smile and I want to be that for you. So here’s me, your girl, sitting here thinking about how much I love you and how you’re literally my whole heart. Baby, do you even know how much I adore you? You make me so soft. I swear, sometimes I just stop and think about you and I can’t help but smile like a fool.
+
+I love your face, I love your voice, I love your laugh, I love every little detail about you. I love the way you look at me, the way you talk to me, the way you make me feel safe just by being you. Baby, you’re my comfort, my happiness, my peace. If I could, I’d be right there beside you right now kissing your cheeks nonstop until you laugh at me.
+
+Imagine me cuddled up against you, holding onto you so tight, not letting go no matter what. Imagine me showering you with little kisses, whispering I love you in your ear over and over, calling you my baby, my love, my everything. Because that’s who you are to me. You’re my everything.
+
+I want you to smile right now, even just a little one, because your smile is my favorite thing in this whole world. Baby, when you smile, it feels like the whole world lights up. You probably don’t even realize how beautiful you look when you’re happy, but to me, it’s the most perfect thing I’ve ever seen.
+
+So smile for me, love. Smile knowing that you are loved more than words could ever say. Smile because you have me forever, and I’ll never stop choosing you. Smile because you are the best thing that’s ever happened to me. And if you’re still not smiling yet, just picture me looking at you with heart eyes, probably acting silly just to make you laugh, because you’re my baby and I live to see you happy.
+
+I love you endlessly, my baby. Always, always, always.`,
+    "https://i.imgur.com/03ngIVJ.png": `Hi my baby,
+
+If you’re opening this right now, it probably means something didn’t go the way you wanted, and my heart just aches thinking you might be feeling down. I want you to know first and foremost that it’s okay, my love. It’s okay to feel sad, frustrated, or even a little lost sometimes. It doesn’t make you any less amazing it only shows how much you care, how much you try, and how deeply you put your heart into everything you do. That’s one of the many things I love about you.
+
+I know it hurts, and I know it might feel heavy in this moment, but please, baby, don’t let this define you. You are not your mistakes, you are not this one setback, and you are not less worthy of love or success. You are brave, you are strong, and you are endlessly capable. And honestly? Every time I see you try again, every time I see you keep going even when it’s hard, I fall in love with you all over again. You inspire me more than I can even explain.
+
+I wish I could be right there with you, holding you tight, telling you it’s okay to cry, it’s okay to be disappointed, and it’s okay to take your time to heal. You don’t have to be perfect, baby. None of us do. The way you keep moving forward, learning, growing, and giving your all even when things don’t go as planned that’s what truly matters. That’s what makes you the incredible person I love more than anything in the world.
+
+So please, be gentle with yourself. Take a deep breath. Rest if you need to. And know that this is just a step in your journey, not the whole story. Failures don’t take away your worth they add to your strength. And through it all, I’ll be right here, holding your hand, cheering for you, and loving you with my whole heart.
+
+I love you endlessly, my baby. You are my favorite, my pride, my joy. No matter what, I’m always on your side, forever believing in you, forever loving you, forever yours.`,
+    "https://i.imgur.com/al7LQtq.png": `Hey baby
+
+I know your head’s probably spinning and everything feels too loud right now. I want you to just stop for a second and breathe. Imagine me right there with you, wrapping my arms around you, holding you close so tight that all the tension leaves your body. You don’t have to talk or explain or fix anything. Just let me be with you, let me be your safe place.
+
+Close your eyes and picture me brushing your hair back, kissing your forehead softly, whispering that it’s okay, that it’s really okay. Baby, you’re doing your best, even when it feels like it’s not enough. You’re allowed to feel tired, to feel stressed, to just want a pause. And I’ll be here holding that pause with you, letting you rest while I remind you that you’re loved so much.
+
+Take a deep breath, baby. In and out. That’s it. Right now you don’t need to solve the world. You don’t need to have all the answers. You just need to feel peace for a little while, and I’ll give it to you. I’ll be the calm you need, the warmth you crave, the reminder that everything is going to be okay, even if it doesn’t feel like it yet.
+
+I love you so much, my baby. More than I can say, more than you can imagine. And you don’t ever have to do this life alone because I’m always with you, holding you through it all. So relax into me, let your shoulders drop, let your heart rest, and just feel my love surrounding you.
+
+I’ve got you, always`
+  };
+
+  images.forEach(img => {
+    img.addEventListener('click', () => {
+      const src = img.getAttribute('data-popup');
+      popupImg.src = src;
+      popup.style.display = 'flex';
+      loveText.innerHTML = loveMessages[src] || "";
+    });
+  });
+
+  backBtn.addEventListener('click', () => {
+    popup.style.display = 'none';
+    popupImg.src = "";
+    loveText.innerHTML = "";
+  });
+
+  feelBtn.addEventListener('click', () => {
+    phoneContainer.innerHTML = `
+      <img src="https://i.imgur.com/PxOZFiA.png" style="width:100%; height:100%; object-fit:cover;">
+      <button id="backBtn">back</button>
+    `;
+    const newBackBtn = document.getElementById('backBtn');
+    newBackBtn.addEventListener('click', () => {
+      phoneContainer.innerHTML = originalHTML;
+      attachOverlayListeners();
+    });
+  });
+
+  function attachOverlayListeners() {
+    const newImages = document.querySelectorAll('.overlay-img');
+    newImages.forEach(img => {
+      img.addEventListener('click', () => {
+        const src = img.getAttribute('data-popup');
+        popupImg.src = src;
+        popup.style.display = 'flex';
+        loveText.innerHTML = loveMessages[src] || "";
+      });
+    });
+
+    document.getElementById('feelBtn').addEventListener('click', () => {
+      phoneContainer.innerHTML = `
+        <img src="https://i.imgur.com/PxOZFiA.png" style="width:100%; height:100%; object-fit:cover;">
+        <button id="backBtn">back</button>
+      `;
+      const newBackBtn = document.getElementById('backBtn');
+      newBackBtn.addEventListener('click', () => {
+        phoneContainer.innerHTML = originalHTML;
+        attachOverlayListeners();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
